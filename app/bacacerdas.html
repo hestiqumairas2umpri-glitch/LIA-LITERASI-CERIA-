@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BacaCerdas — Aplikasi Literasi Digital untuk Kelas 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#EAF3FF; --bg2:#FFFFFF;
+  --ink:#1B2A41; --ink-soft:#5B6B85;
+  --primary:#1D4E9B; --primary-dark:#123166; --primary-light:#3B6FC4;
+  --gold:#F5B400; --gold-dark:#8A6100;
+  --success:#1F9D6B; --success-bg:#E5F6EE;
+  --danger:#E0523E; --danger-bg:#FCEAE6;
+  --card:#fff; --border:#DCE8FA;
+  --radius:16px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:linear-gradient(180deg, var(--bg1), var(--bg2) 340px);
+  color:var(--ink); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; line-height:1.6;
+}
+h1,h2,h3,.headline{font-family:'Baloo 2',system-ui,sans-serif; color:var(--primary-dark); font-weight:700; margin:0 0 .3em;}
+button{font-family:inherit; cursor:pointer;}
+#app{min-height:100vh;}
+.topbar{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; background:var(--primary); color:#fff;}
+.topbar .brand{display:flex; align-items:center; gap:10px; font-family:'Baloo 2'; font-weight:800; font-size:1.3rem;}
+.topbar .brand .mark{width:36px;height:36px;border-radius:11px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.15rem;}
+.topbar .who{font-size:.9rem; opacity:.95; display:flex; align-items:center; gap:12px;}
+.topbar button.link{background:none;border:1px solid rgba(255,255,255,.5); color:#fff; padding:6px 14px; border-radius:20px; font-size:.85rem;}
+.topbar button.link:hover{background:rgba(255,255,255,.14);}
+.shell{display:flex; min-height:calc(100vh - 66px);}
+.sidebar{width:230px; flex:none; background:#fff; border-right:1px solid var(--border); padding:20px 12px; display:flex; flex-direction:column; gap:4px;}
+.sidebar button{text-align:left; background:none; border:none; padding:11px 14px; border-radius:12px; font-size:.95rem; color:var(--ink); font-weight:500;}
+.sidebar button.active{background:var(--primary); color:#fff;}
+.sidebar button:not(.active):hover{background:var(--bg1);}
+main{flex:1; padding:32px 40px; max-width:1000px;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:18px; box-shadow:0 2px 10px rgba(29,78,155,.05);}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px;}
+.tile{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; cursor:pointer; transition:transform .15s, box-shadow .15s;}
+.tile:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(29,78,155,.12);}
+.tile .cat{display:inline-block; font-size:.72rem; color:var(--primary); font-weight:700; background:var(--bg1); padding:3px 9px; border-radius:8px;}
+.tile h3{font-size:1.05rem; margin:.4em 0;}
+.tile p{font-size:.85rem; color:var(--ink-soft); margin:0;}
+.progress-bar{height:9px; background:#EAF0FB; border-radius:6px; overflow:hidden; margin-top:10px;}
+.progress-bar > div{height:100%; background:var(--success);}
+.btn{background:var(--primary); color:#fff; border:none; padding:11px 22px; border-radius:24px; font-weight:600; font-size:.95rem;}
+.btn:hover{background:var(--primary-light);}
+.btn.secondary{background:none; color:var(--primary); border:1.5px solid var(--primary);}
+.btn.gold{background:var(--gold); color:var(--gold-dark);}
+input[type=text]{padding:10px 12px; border-radius:10px; border:1.5px solid var(--border); font-size:.95rem; width:100%; font-family:inherit; background:#fff;}
+label{font-size:.85rem; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:5px;}
+.field{margin-bottom:16px;}
+.role-pick{display:flex; gap:18px; flex-wrap:wrap;}
+.role-card{flex:1; min-width:230px; background:var(--card); border:2px solid var(--border); border-radius:var(--radius); padding:26px; text-align:center;}
+.role-card:hover{border-color:var(--primary);}
+.readtext{font-size:1.06rem; max-width:72ch; white-space:pre-line;}
+.qopt{display:block; width:100%; text-align:left; background:#fff; border:1.5px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:9px; font-size:.95rem;}
+.qopt:hover{border-color:var(--primary);}
+.qopt.correct{border-color:var(--success); background:var(--success-bg);}
+.qopt.wrong{border-color:var(--danger); background:var(--danger-bg);}
+.badge{display:inline-block; padding:3px 10px; border-radius:12px; font-size:.75rem; font-weight:700;}
+.badge.ok{background:var(--success-bg); color:#166B49;}
+.badge.mid{background:#FFF2D6; color:var(--gold-dark);}
+.badge.low{background:var(--danger-bg); color:#9B3220;}
+table{width:100%; border-collapse:collapse; font-size:.9rem;}
+th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--border);}
+th{color:var(--ink-soft); font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em;}
+.word-chip{display:inline-block; padding:8px 14px; margin:4px; border-radius:10px; border:1.5px solid var(--border); background:#fff; font-weight:600;}
+.word-chip.picked{background:var(--primary); color:#fff; border-color:var(--primary);}
+.empty{color:var(--ink-soft); font-style:italic;}
+.small{font-size:.85rem; color:var(--ink-soft);}
+.result-box{border-radius:var(--radius); padding:20px; text-align:center; background:var(--success-bg); border:1.5px solid var(--success); margin-bottom:16px;}
+.explain{background:var(--bg1); border-radius:10px; padding:12px 14px; margin-top:8px; font-size:.9rem;}
+.quote-card{background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:#fff; border-radius:var(--radius); padding:30px; text-align:center;}
+.quote-card p{font-size:1.15rem; font-family:'Baloo 2'; font-weight:600; max-width:52ch; margin:0 auto;}
+.ring{width:120px;height:120px;border-radius:50%; display:flex;align-items:center;justify-content:center; font-family:'Baloo 2'; font-weight:700; font-size:1.4rem; color:var(--primary-dark);}
+.stat-row{display:flex; gap:16px; flex-wrap:wrap;}
+.stat-box{flex:1; min-width:140px; background:var(--bg1); border-radius:12px; padding:16px; text-align:center;}
+.stat-box .num{font-family:'Baloo 2'; font-size:1.6rem; color:var(--primary-dark); font-weight:700;}
+.level-tag{display:inline-block; background:var(--gold); color:var(--gold-dark); font-weight:700; padding:4px 12px; border-radius:14px; font-size:.8rem; margin-top:6px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ---------- DATA ---------- */
+const PASSAGES = [
+ {id:'komodo', cat:'Informasi', menit:12, title:'Keajaiban Taman Nasional Komodo',
+  text:`Di ujung timur Nusa Tenggara, tersembunyi sebuah kawasan yang menyimpan salah satu keajaiban alam paling langka di dunia: Taman Nasional Komodo. Kawasan ini terdiri dari beberapa pulau utama, yaitu Pulau Komodo, Pulau Rinca, dan Pulau Padar, yang dikelilingi oleh laut biru jernih dan perbukitan sabana yang kering menguning di musim panas.
+
+Taman Nasional Komodo menjadi rumah bagi hewan purba yang hanya bisa ditemukan di kawasan ini, yaitu komodo (Varanus komodoensis). Komodo adalah kadal terbesar di dunia, dengan panjang tubuh yang bisa mencapai tiga meter. Meski gerakannya terlihat lamban, komodo sebenarnya adalah pemburu yang sangat efektif. Air liurnya mengandung bakteri dan racun yang dapat melemahkan mangsanya hanya dalam beberapa hari.
+
+Selain komodo, taman nasional ini juga menyimpan kekayaan bawah laut yang luar biasa. Terumbu karang berwarna-warni, ikan pari manta, dan ratusan spesies ikan hidup berdampingan di perairan sekitar pulau. Banyak penyelam dari berbagai negara datang khusus untuk menikmati keindahan bawah lautnya.
+
+Karena keunikannya, Taman Nasional Komodo ditetapkan sebagai Situs Warisan Dunia UNESCO dan menjadi salah satu dari Tujuh Keajaiban Alam Dunia versi masyarakat internasional. Namun, status istimewa ini juga membawa tanggung jawab besar. Pemerintah dan warga setempat harus terus menjaga keseimbangan antara kunjungan wisatawan dan kelestarian habitat komodo, agar generasi mendatang tetap bisa menyaksikan hewan purba ini hidup bebas di alamnya sendiri.`,
+  questions:[
+   {q:'Di provinsi manakah Taman Nasional Komodo berada?', o:['Nusa Tenggara','Sulawesi Utara','Kalimantan Timur','Maluku'], a:0, e:'Bacaan menyebutkan kawasan ini berada di ujung timur Nusa Tenggara.'},
+   {q:'Apa yang membuat gigitan komodo berbahaya bagi mangsanya?', o:['Giginya yang sangat tajam','Air liur yang mengandung bakteri dan racun','Cakarnya yang kuat','Kecepatan larinya'], a:1, e:'Air liur komodo mengandung bakteri dan racun yang melemahkan mangsa secara bertahap.'},
+   {q:'Selain komodo, apa lagi daya tarik utama taman nasional ini?', o:['Gunung berapi aktif','Kekayaan bawah laut seperti terumbu karang dan ikan pari manta','Hutan hujan tropis','Air terjun bertingkat'], a:1, e:'Paragraf ketiga menjelaskan kekayaan bawah laut sebagai daya tarik lainnya.'},
+   {q:'Pengakuan apa yang diberikan dunia internasional kepada Taman Nasional Komodo?', o:['Situs Warisan Dunia UNESCO','Ibu kota pariwisata Indonesia','Cagar budaya nasional','Kota metropolitan baru'], a:0, e:'Taman ini ditetapkan sebagai Situs Warisan Dunia UNESCO.'},
+   {q:'Apa tanggung jawab yang harus dijaga terkait status istimewa taman ini?', o:['Meningkatkan jumlah wisatawan sebanyak mungkin','Menyeimbangkan kunjungan wisatawan dan kelestarian habitat','Menutup taman untuk umum','Memindahkan komodo ke kebun binatang'], a:1, e:'Paragraf terakhir menekankan pentingnya menjaga keseimbangan antara wisata dan kelestarian.'},
+  ]},
+ {id:'persahabatan', cat:'Cerita', menit:10, title:'Persahabatan di Tengah Perbedaan',
+  text:`Alika baru saja pindah ke kota kecil itu bersama keluarganya. Hari pertama di sekolah barunya terasa canggung; ia belum mengenal siapa pun, dan logat bicaranya sedikit berbeda dari teman-teman sekelas. Saat istirahat, ia duduk sendirian di sudut kantin sambil membuka bekal yang dibawanya dari rumah.
+
+Tak lama, seorang anak laki-laki bernama Raka mendekat. "Boleh aku duduk di sini?" tanyanya sambil tersenyum. Alika mengangguk pelan. Raka bercerita bahwa keluarganya berasal dari daerah yang jauh berbeda dengan Alika, dengan bahasa daerah dan kebiasaan yang juga berbeda. Namun, alih-alih menjadikan perbedaan itu sebagai jarak, Raka justru penasaran dan banyak bertanya tentang kampung halaman Alika.
+
+Hari-hari berikutnya, keduanya semakin akrab. Raka mengajak Alika berkenalan dengan teman-teman lain, sementara Alika mengajarkan beberapa kata dalam bahasa daerahnya kepada Raka. Mereka juga sering mengerjakan tugas kelompok bersama, saling melengkapi kekurangan satu sama lain. Alika yang pandai menggambar membantu Raka membuat poster, sedangkan Raka yang jago berhitung membantu Alika memahami soal matematika yang sulit.
+
+Suatu hari, seorang teman sekelas mengejek logat bicara Alika di depan banyak orang. Suasana kantin mendadak hening. Namun Raka segera berdiri dan berkata tegas, "Logat yang berbeda bukan sesuatu yang pantas ditertawakan. Justru itu yang membuat kita semua unik." Kata-kata itu membuat teman-teman lain terdiam, dan sejak saat itu, tidak ada lagi yang mengejek Alika.
+
+Persahabatan Alika dan Raka mengajarkan bahwa perbedaan bukanlah penghalang untuk saling mengenal dan mendukung. Justru dari perbedaan itulah, mereka belajar banyak hal baru dan tumbuh menjadi pribadi yang lebih terbuka.`,
+  questions:[
+   {q:'Bagaimana perasaan Alika pada hari pertama di sekolah barunya?', o:['Sangat senang dan percaya diri','Canggung karena belum mengenal siapa pun','Marah kepada teman sekelas','Bosan dan ingin pulang'], a:1, e:'Paragraf pertama menyebutkan Alika merasa canggung karena belum mengenal siapa pun.'},
+   {q:'Apa yang membuat Raka tertarik berkenalan dengan Alika?', o:['Alika terlihat kaya','Raka penasaran dengan latar belakang Alika yang berbeda','Alika duduk di kursi Raka','Guru menyuruh Raka berkenalan'], a:1, e:'Raka penasaran dan banyak bertanya tentang kampung halaman Alika, bukan menjauhinya karena beda latar belakang.'},
+   {q:'Bagaimana Alika dan Raka saling melengkapi dalam tugas kelompok?', o:['Alika menggambar, Raka membantu berhitung','Keduanya hanya bermain saja','Raka mengerjakan semua tugas sendirian','Alika tidak ikut membantu'], a:0, e:'Alika membantu menggambar poster, sedangkan Raka membantu soal matematika.'},
+   {q:'Apa yang dilakukan Raka saat Alika diejek karena logatnya?', o:['Diam saja','Ikut menertawakan','Membela Alika di depan teman-teman','Melaporkan ke kepala sekolah'], a:2, e:'Raka berdiri dan menegaskan bahwa logat berbeda bukan hal yang pantas ditertawakan.'},
+   {q:'Apa pesan utama dari cerita ini?', o:['Perbedaan harus dihindari','Perbedaan bisa menjadi sumber belajar dan mempererat persahabatan','Anak baru sebaiknya diam saja','Logat daerah harus dihilangkan'], a:1, e:'Paragraf penutup menegaskan bahwa perbedaan justru mengajarkan banyak hal dan mempererat persahabatan.'},
+  ]},
+ {id:'lingkungan', cat:'Artikel', menit:8, title:'Menjaga Lingkungan Sekolah',
+  text:`Lingkungan sekolah yang bersih dan hijau bukan hanya membuat suasana belajar lebih nyaman, tetapi juga membentuk kebiasaan baik bagi para siswanya. Sayangnya, di banyak sekolah, sampah plastik dari jajanan dan kemasan minuman masih sering berserakan di halaman maupun di laci meja.
+
+Salah satu langkah sederhana yang bisa dilakukan adalah membiasakan diri membuang sampah pada tempatnya sesuai jenisnya, yaitu sampah organik, anorganik, dan sampah yang bisa didaur ulang. Dengan memilah sampah sejak awal, proses pengolahan sampah selanjutnya akan menjadi lebih mudah dan tidak mencemari lingkungan.
+
+Selain soal sampah, penghijauan juga penting untuk menjaga kualitas udara di sekitar sekolah. Menanam pohon di halaman, merawat taman kecil di depan kelas, atau sekadar meletakkan tanaman pot di jendela dapat membantu menyerap debu dan menghasilkan udara yang lebih segar. Kegiatan menanam bersama-sama juga bisa menjadi momen kebersamaan yang menyenangkan antar siswa.
+
+Penghematan air dan listrik juga menjadi bagian penting dari menjaga lingkungan sekolah. Mematikan lampu dan kipas angin saat ruangan kosong, serta menutup keran air rapat-rapat setelah digunakan, adalah kebiasaan kecil yang jika dilakukan bersama-sama akan memberikan dampak besar bagi kelestarian lingkungan.
+
+Menjaga lingkungan sekolah sebenarnya bukan tugas petugas kebersihan saja, melainkan tanggung jawab bersama seluruh warga sekolah. Jika kebiasaan baik ini dilakukan sejak dini, siswa akan tumbuh menjadi pribadi yang peduli lingkungan, tidak hanya di sekolah, tetapi juga di rumah dan di masyarakat luas.`,
+  questions:[
+   {q:'Apa masalah lingkungan yang sering ditemukan di banyak sekolah menurut bacaan?', o:['Kekurangan ruang kelas','Sampah plastik yang berserakan','Kurangnya guru','Bangunan yang rusak'], a:1, e:'Paragraf pertama menyebutkan sampah plastik yang berserakan sebagai masalah umum.'},
+   {q:'Mengapa memilah sampah sejak awal penting dilakukan?', o:['Agar sampah terlihat rapi saja','Agar proses pengolahan selanjutnya lebih mudah dan tidak mencemari lingkungan','Agar sekolah mendapat penghargaan','Agar petugas kebersihan tidak bekerja'], a:1, e:'Memilah sampah membuat proses pengolahan berikutnya lebih mudah dan mengurangi pencemaran.'},
+   {q:'Apa manfaat penghijauan di sekolah menurut bacaan?', o:['Menyerap debu dan menghasilkan udara segar','Membuat sekolah lebih gelap','Menambah jumlah sampah','Mengurangi jumlah siswa'], a:0, e:'Penghijauan membantu menyerap debu dan menghasilkan udara yang lebih segar.'},
+   {q:'Sebutkan contoh kebiasaan hemat energi yang disebutkan dalam bacaan.', o:['Menyalakan semua lampu sepanjang hari','Mematikan lampu dan kipas saat ruangan kosong','Membiarkan keran air menyala','Menggunakan AC terus-menerus'], a:1, e:'Bacaan menyebutkan mematikan lampu dan kipas angin saat ruangan kosong sebagai contoh hemat energi.'},
+   {q:'Menurut bacaan, siapa yang bertanggung jawab menjaga lingkungan sekolah?', o:['Hanya petugas kebersihan','Hanya kepala sekolah','Seluruh warga sekolah','Hanya siswa kelas 6'], a:2, e:'Paragraf terakhir menegaskan bahwa menjaga lingkungan adalah tanggung jawab bersama seluruh warga sekolah.'},
+  ]},
+ {id:'kihajar', cat:'Biografi', menit:15, title:'Ki Hajar Dewantara, Bapak Pendidikan Indonesia',
+  text:`Ki Hajar Dewantara lahir dengan nama Raden Mas Soewardi Soerjaningrat di Yogyakarta pada akhir abad ke-19. Ia berasal dari lingkungan keluarga bangsawan, namun sejak muda ia memilih jalan hidup yang berbeda dengan terjun ke dunia jurnalistik dan pergerakan kebangsaan untuk menyuarakan pentingnya pendidikan bagi seluruh rakyat, bukan hanya golongan tertentu.
+
+Pada masa penjajahan, kesempatan mengenyam pendidikan sangat terbatas, terutama bagi rakyat biasa. Ki Hajar Dewantara memandang hal ini sebagai ketidakadilan yang harus diperjuangkan. Ia percaya bahwa pendidikan adalah hak semua anak bangsa, tanpa memandang status sosial maupun keturunan.
+
+Pada tahun 1922, ia mendirikan Taman Siswa, sebuah lembaga pendidikan yang terbuka bagi siapa saja. Di Taman Siswa, ia menerapkan metode pengajaran yang menghargai kemerdekaan berpikir siswa, berbeda dengan sistem pendidikan kolonial yang cenderung kaku dan membeda-bedakan status sosial murid.
+
+Salah satu pemikirannya yang paling dikenal hingga kini adalah semboyan "Ing Ngarso Sung Tulodo, Ing Madyo Mangun Karso, Tut Wuri Handayani", yang secara sederhana bermakna bahwa seorang pendidik harus mampu memberi teladan ketika berada di depan, membangun semangat ketika berada di tengah, dan memberi dorongan ketika berada di belakang.
+
+Atas jasa dan pemikirannya yang besar dalam memperjuangkan pendidikan untuk semua, pemerintah Indonesia menetapkan tanggal kelahirannya, 2 Mei, sebagai Hari Pendidikan Nasional. Semangat Ki Hajar Dewantara terus dikenang sebagai landasan penting dalam membangun dunia pendidikan Indonesia yang lebih adil dan merata hingga saat ini.`,
+  questions:[
+   {q:'Apa nama asli Ki Hajar Dewantara sebelum dikenal dengan nama tersebut?', o:['Raden Mas Soewardi Soerjaningrat','Raden Ajeng Kartini','Soekarno','Mohammad Hatta'], a:0, e:'Bacaan menyebutkan nama aslinya adalah Raden Mas Soewardi Soerjaningrat.'},
+   {q:'Apa yang dipandang Ki Hajar Dewantara sebagai ketidakadilan pada masa penjajahan?', o:['Harga barang yang mahal','Terbatasnya kesempatan pendidikan bagi rakyat biasa','Kurangnya lahan pertanian','Sedikitnya jumlah tentara'], a:1, e:'Ia memandang keterbatasan akses pendidikan bagi rakyat biasa sebagai ketidakadilan.'},
+   {q:'Apa nama lembaga pendidikan yang didirikan Ki Hajar Dewantara pada tahun 1922?', o:['Sekolah Rakyat','Taman Siswa','Budi Utomo','Sarekat Islam'], a:1, e:'Pada tahun 1922 ia mendirikan Taman Siswa.'},
+   {q:'Apa makna dari bagian semboyan "Tut Wuri Handayani"?', o:['Memberi teladan di depan','Membangun semangat di tengah','Memberi dorongan ketika berada di belakang','Menghukum murid yang salah'], a:2, e:'Tut Wuri Handayani berarti memberi dorongan ketika berada di belakang.'},
+   {q:'Mengapa tanggal 2 Mei diperingati sebagai Hari Pendidikan Nasional?', o:['Karena merupakan hari kemerdekaan','Karena adalah tanggal lahir Ki Hajar Dewantara','Karena hari libur nasional','Karena awal tahun ajaran baru'], a:1, e:'Tanggal 2 Mei adalah tanggal kelahiran Ki Hajar Dewantara, ditetapkan sebagai Hari Pendidikan Nasional.'},
+  ]},
+];
+
+const WORD_BANK = [
+ {word:'KOMODO', hint:'Kadal purba terbesar di dunia yang hidup di Nusa Tenggara'},
+ {word:'PERSAHABATAN', hint:'Hubungan akrab antara dua orang atau lebih meski berbeda latar belakang'},
+ {word:'DAUR ULANG', hint:'Proses mengolah kembali sampah agar bisa dipakai lagi (dua kata)'},
+ {word:'TAMAN SISWA', hint:'Lembaga pendidikan yang didirikan Ki Hajar Dewantara (dua kata)'},
+ {word:'TERUMBU KARANG', hint:'Ekosistem laut berwarna-warni tempat banyak ikan hidup (dua kata)'},
+ {word:'PENGHIJAUAN', hint:'Kegiatan menanam pohon dan tanaman untuk menyegarkan udara'},
+];
+
+const SENTENCE_GAME = [
+ {parts:['Komodo','adalah','kadal','terbesar','di','dunia'], correct:'Komodo adalah kadal terbesar di dunia'},
+ {parts:['Perbedaan','bukanlah','penghalang','untuk','saling','mendukung'], correct:'Perbedaan bukanlah penghalang untuk saling mendukung'},
+ {parts:['Memilah','sampah','membuat','pengolahan','lebih','mudah'], correct:'Memilah sampah membuat pengolahan lebih mudah'},
+ {parts:['Ki','Hajar','Dewantara','mendirikan','Taman','Siswa'], correct:'Ki Hajar Dewantara mendirikan Taman Siswa'},
+];
+
+const QUOTES = [
+ 'Membaca hari ini, masa depan esok.',
+ 'Buku adalah jendela dunia; semakin banyak membaca, semakin luas dunia yang kau lihat.',
+ 'Kebiasaan membaca yang kecil hari ini bisa menjadi pengetahuan besar di masa depan.',
+ 'Setiap halaman yang kau baca adalah satu langkah menuju pemahaman baru.',
+ 'Membaca bukan hanya mengenal kata, tetapi memahami makna di baliknya.',
+ 'Orang yang gemar membaca tidak pernah merasa sendirian.',
+ 'Ilmu hari ini, kesuksesan esok hari.',
+ 'Rajin membaca membuat pikiran semakin tajam dan luas.',
+];
+
+/* ---------- STATE ---------- */
+let state = {screen:'home', role:null, student:null, passageId:null, quiz:null, game:null};
+
+function loadDB(){ try{return JSON.parse(localStorage.getItem('bc_students')||'{}');}catch(e){return {};} }
+function saveDB(db){ try{localStorage.setItem('bc_students', JSON.stringify(db));}catch(e){} }
+function getStudent(name){ const db=loadDB(); if(!db[name]) db[name]={progress:{passages:{}, games:{}}}; return db[name]; }
+function saveStudent(name, data){ const db=loadDB(); db[name]=data; saveDB(db); }
+
+function levelFromAvg(avg){
+  if(avg===null) return {name:'Belum Ada Data', desc:'Selesaikan minimal satu bacaan untuk mendapatkan rekomendasi level.'};
+  if(avg<50) return {name:'Pemula Kata', desc:'Fokus pada bacaan pendek dan kosakata dasar terlebih dahulu.'};
+  if(avg<75) return {name:'Penjelajah Kata', desc:'Lanjutkan latihan pada bacaan bertema cerita dan artikel.'};
+  return {name:'Master Kata', desc:'Siap membaca teks yang lebih panjang seperti biografi dan informasi ilmiah.'};
+}
+
+/* ---------- RENDER HELPERS ---------- */
+const $app = document.getElementById('app');
+function render(){ $app.innerHTML=''; $app.appendChild(buildScreen()); window.scrollTo(0,0); }
+function el(tag, attrs={}, ...children){
+  const e = document.createElement(tag);
+  for(const k in attrs){
+    if(k==='html') e.innerHTML = attrs[k];
+    else if(k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  children.flat().forEach(c=>{ if(typeof c==='string') e.appendChild(document.createTextNode(c)); else if(c) e.appendChild(c); });
+  return e;
+}
+
+function topbar(){
+  const who = state.role==='siswa' ? `Siswa: ${state.student} · Kelas 6` : state.role==='guru' ? 'Mode Guru' : '';
+  return el('div',{class:'topbar'},
+    el('div',{class:'brand'}, el('span',{class:'mark'},'📘'), 'BacaCerdas'),
+    el('div',{class:'who'}, who? el('span',{},who):'',
+      state.role ? el('button',{class:'link', onclick:()=>{state.role=null; state.student=null; state.screen='home'; render();}},'Keluar') : '')
+  );
+}
+function sidebarStudent(){
+  const items = [['baca','📖 Bacaan Panjang'],['games','🎮 Games Edukatif'],['bijak','💬 Kata-kata Bijak'],['progres','📊 Progres Saya']];
+  const nav = el('div',{class:'sidebar'});
+  items.forEach(([id,label])=>{ nav.appendChild(el('button',{class: state.screen===id?'active':'', onclick:()=>{state.screen=id; state.passageId=null; state.quiz=null; state.game=null; render();}}, label)); });
+  return nav;
+}
+function sidebarGuru(){ const nav=el('div',{class:'sidebar'}); nav.appendChild(el('button',{class:'active'},'📊 Dashboard Guru')); return nav; }
+
+/* ---------- SCREENS ---------- */
+function buildScreen(){
+  const wrap = el('div',{});
+  wrap.appendChild(topbar());
+  if(state.screen==='home'){ wrap.appendChild(screenHome()); return wrap; }
+  const shell = el('div',{class:'shell'});
+  if(state.role==='siswa') shell.appendChild(sidebarStudent());
+  if(state.role==='guru') shell.appendChild(sidebarGuru());
+  const m = el('main',{});
+  if(state.role==='siswa'){
+    if(state.screen==='baca' && !state.passageId) m.appendChild(screenPassageList());
+    else if(state.screen==='baca' && state.passageId && !state.quiz) m.appendChild(screenReading());
+    else if(state.screen==='baca' && state.quiz) m.appendChild(screenQuiz());
+    else if(state.screen==='games' && !state.game) m.appendChild(screenGamesList());
+    else if(state.screen==='games' && state.game && state.game.type==='tebak') m.appendChild(screenGameTebak());
+    else if(state.screen==='games' && state.game && state.game.type==='susun') m.appendChild(screenGameSusun());
+    else if(state.screen==='bijak') m.appendChild(screenBijak());
+    else if(state.screen==='progres') m.appendChild(screenProgres());
+    else m.appendChild(screenPassageList());
+  } else if(state.role==='guru'){ m.appendChild(screenGuru()); }
+  shell.appendChild(m); wrap.appendChild(shell);
+  return wrap;
+}
+
+function screenHome(){
+  const box = el('div',{style:'max-width:780px;margin:50px auto;padding:0 24px;'});
+  box.appendChild(el('h1',{class:'headline', style:'font-size:2.1rem;'},'BacaCerdas'));
+  box.appendChild(el('p',{style:'color:var(--primary); font-weight:600; margin:-6px 0 6px'},'Membaca Hari Ini, Masa Depan Esok'));
+  box.appendChild(el('p',{class:'small', style:'font-size:1rem;margin-bottom:28px;'},'Aplikasi literasi digital untuk siswa Kelas 6 — bacaan panjang, soal & pembahasan, games edukatif, kata-kata bijak, dan pemantauan guru.'));
+  const picks = el('div',{class:'role-pick'});
+  const siswaCard = el('div',{class:'role-card'});
+  siswaCard.appendChild(el('h3',{},'Saya Siswa Kelas 6'));
+  siswaCard.appendChild(el('p',{class:'small'},'Baca teks panjang, kerjakan soal pemahaman, dan main games.'));
+  const nameInput = el('input',{type:'text', placeholder:'Nama lengkap'});
+  siswaCard.appendChild(el('div',{class:'field', style:'text-align:left;margin-top:14px;'}, el('label',{},'Nama'), nameInput));
+  siswaCard.appendChild(el('button',{class:'btn', style:'width:100%', onclick:()=>{
+    const name = nameInput.value.trim();
+    if(!name){ alert('Isi nama terlebih dahulu ya.'); return; }
+    getStudent(name); saveStudent(name, getStudent(name));
+    state.role='siswa'; state.student=name; state.screen='baca'; render();
+  }},'Mulai Belajar'));
+  picks.appendChild(siswaCard);
+  const guruCard = el('div',{class:'role-card'});
+  guruCard.appendChild(el('h3',{},'Saya Guru'));
+  guruCard.appendChild(el('p',{class:'small'},'Pantau perkembangan membaca setiap siswa di kelas.'));
+  guruCard.appendChild(el('div',{style:'height:70px'}));
+  guruCard.appendChild(el('button',{class:'btn gold', style:'width:100%', onclick:()=>{state.role='guru'; state.screen='guru'; render();}},'Buka Dashboard Guru'));
+  picks.appendChild(guruCard);
+  box.appendChild(picks);
+  return box;
+}
+
+function screenPassageList(){
+  const box = el('div',{});
+  box.appendChild(el('h2',{},'Bacaan Panjang'));
+  box.appendChild(el('p',{class:'small', style:'margin-bottom:18px'},'Pilih satu teks untuk dibaca, lalu kerjakan soal pemahamannya.'));
+  const grid = el('div',{class:'grid'});
+  const s = getStudent(state.student);
+  PASSAGES.forEach(p=>{
+    const prog = s.progress.passages[p.id];
+    const tile = el('div',{class:'tile', onclick:()=>{state.passageId=p.id; render();}});
+    tile.appendChild(el('span',{class:'cat'}, p.cat));
+    tile.appendChild(el('h3',{}, p.title));
+    tile.appendChild(el('p',{}, `${p.menit} menit baca`));
+    if(prog) tile.appendChild(el('div',{style:'margin-top:8px'}, el('span',{class:'badge ok'}, `Selesai · ${prog.score}/${prog.total}`)));
+    grid.appendChild(tile);
+  });
+  box.appendChild(grid);
+  return box;
+}
+
+function screenReading(){
+  const p = PASSAGES.find(x=>x.id===state.passageId);
+  const box = el('div',{});
+  box.appendChild(el('button',{class:'btn secondary', style:'margin-bottom:16px', onclick:()=>{state.passageId=null; render();}},'← Kembali'));
+  const card = el('div',{class:'card'});
+  card.appendChild(el('span',{class:'cat'}, p.cat));
+  card.appendChild(el('h2',{style:'margin-top:8px'}, p.title));
+  card.appendChild(el('div',{class:'readtext'}, p.text));
+  box.appendChild(card);
+  box.appendChild(el('button',{class:'btn', onclick:()=>{state.quiz={qi:0, correct:0, answered:false}; render();}},'Lanjut ke Soal Pemahaman →'));
+  return box;
+}
+
+function screenQuiz(){
+  const p = PASSAGES.find(x=>x.id===state.passageId);
+  const qz = state.quiz;
+  const box = el('div',{});
+  if(qz.qi >= p.questions.length){
+    const pct = Math.round(qz.correct/p.questions.length*100);
+    const s = getStudent(state.student);
+    s.progress.passages[p.id] = {score:qz.correct, total:p.questions.length, pct, date:new Date().toISOString()};
+    saveStudent(state.student, s);
+    const rb = el('div',{class:'result-box'});
+    rb.appendChild(el('h2',{},'Selesai! 🎉'));
+    rb.appendChild(el('p',{}, `Skor kamu: ${qz.correct} dari ${p.questions.length} (${pct}%)`));
+    box.appendChild(rb);
+    box.appendChild(el('button',{class:'btn', onclick:()=>{state.passageId=null; state.quiz=null; render();}},'Kembali ke Daftar Bacaan'));
+    return box;
+  }
+  const q = p.questions[qz.qi];
+  box.appendChild(el('p',{class:'small'}, `Soal ${qz.qi+1} dari ${p.questions.length}`));
+  const card = el('div',{class:'card'});
+  card.appendChild(el('h3',{}, q.q));
+  const explainBox = el('div',{});
+  q.o.forEach((opt,i)=>{
+    card.appendChild(el('button',{class:'qopt', onclick:()=>{
+      if(qz.answered) return;
+      qz.answered = true;
+      const buttons = card.querySelectorAll('.qopt');
+      buttons[i].classList.add(i===q.a?'correct':'wrong');
+      buttons[q.a].classList.add('correct');
+      if(i===q.a) qz.correct++;
+      explainBox.appendChild(el('div',{class:'explain'}, `Pembahasan: ${q.e}`));
+      card.appendChild(el('button',{class:'btn', style:'margin-top:14px', onclick:()=>{qz.qi++; qz.answered=false; render();}}, qz.qi+1<p.questions.length? 'Soal Berikutnya →' : 'Lihat Hasil →'));
+    }}, opt));
+  });
+  card.appendChild(explainBox);
+  box.appendChild(card);
+  return box;
+}
+
+function screenGamesList(){
+  const box = el('div',{});
+  box.appendChild(el('h2',{},'Games Edukatif'));
+  box.appendChild(el('p',{class:'small', style:'margin-bottom:18px'},'Belajar sambil bermain: asah kosakata dan pemahaman kalimat.'));
+  const grid = el('div',{class:'grid'});
+  const s = getStudent(state.student);
+  const g1 = el('div',{class:'tile', onclick:()=>{state.game={type:'tebak', idx:0, score:0, input:''}; render();}});
+  g1.appendChild(el('span',{class:'cat'},'Kosakata'));
+  g1.appendChild(el('h3',{},'🔤 Tebak Kata'));
+  g1.appendChild(el('p',{}, 'Tebak kata dari petunjuk yang berkaitan dengan bacaan.'));
+  if(s.progress.games.tebak) g1.appendChild(el('div',{style:'margin-top:8px'}, el('span',{class:'badge ok'}, `Skor ${s.progress.games.tebak.score}/${s.progress.games.tebak.total}`)));
+  grid.appendChild(g1);
+  const g2 = el('div',{class:'tile', onclick:()=>{state.game={type:'susun', idx:0, score:0, picked:[], pool:null}; render();}});
+  g2.appendChild(el('span',{class:'cat'},'Susun Kata'));
+  g2.appendChild(el('h3',{},'🧩 Petualangan Kata'));
+  g2.appendChild(el('p',{}, 'Susun potongan kata menjadi kalimat yang tepat.'));
+  if(s.progress.games.susun) g2.appendChild(el('div',{style:'margin-top:8px'}, el('span',{class:'badge ok'}, `Skor ${s.progress.games.susun.score}/${s.progress.games.susun.total}`)));
+  grid.appendChild(g2);
+  box.appendChild(grid);
+  return box;
+}
+
+function screenGameTebak(){
+  const g = state.game;
+  const box = el('div',{});
+  box.appendChild(el('button',{class:'btn secondary', style:'margin-bottom:16px', onclick:()=>{state.game=null; render();}},'← Kembali'));
+  if(g.idx >= WORD_BANK.length){
+    const s = getStudent(state.student);
+    s.progress.games.tebak = {score:g.score, total:WORD_BANK.length, date:new Date().toISOString()};
+    saveStudent(state.student, s);
+    const rb = el('div',{class:'result-box'});
+    rb.appendChild(el('h2',{},'Selesai! 🎉'));
+    rb.appendChild(el('p',{}, `Skor kamu: ${g.score} dari ${WORD_BANK.length}`));
+    box.appendChild(rb);
+    box.appendChild(el('button',{class:'btn', onclick:()=>{state.game=null; render();}},'Kembali ke Games'));
+    return box;
+  }
+  const item = WORD_BANK[g.idx];
+  const card = el('div',{class:'card'});
+  card.appendChild(el('p',{class:'small'}, `Kata ${g.idx+1} dari ${WORD_BANK.length}`));
+  card.appendChild(el('h3',{}, `Petunjuk: ${item.hint}`));
+  const input = el('input',{type:'text', placeholder:'Ketik jawabanmu di sini', style:'margin:14px 0;', value:g.input});
+  input.addEventListener('input', e=>{ g.input = e.target.value; });
+  card.appendChild(input);
+  const fb = el('div',{});
+  card.appendChild(fb);
+  card.appendChild(el('button',{class:'btn', onclick:()=>{
+    const guess = (input.value||'').trim().toUpperCase();
+    if(guess === item.word){ g.score++; fb.innerHTML=''; fb.appendChild(el('p',{style:'color:#166B49;font-weight:600'},'Benar! 🎉')); }
+    else { fb.innerHTML=''; fb.appendChild(el('p',{style:'color:#9B3220;font-weight:600'}, `Belum tepat. Jawaban: ${item.word}`)); }
+    setTimeout(()=>{ g.idx++; g.input=''; render(); }, 1100);
+  }},'Periksa Jawaban'));
+  box.appendChild(card);
+  return box;
+}
+
+function screenGameSusun(){
+  const g = state.game;
+  const box = el('div',{});
+  box.appendChild(el('button',{class:'btn secondary', style:'margin-bottom:16px', onclick:()=>{state.game=null; render();}},'← Kembali'));
+  if(g.idx >= SENTENCE_GAME.length){
+    const s = getStudent(state.student);
+    s.progress.games.susun = {score:g.score, total:SENTENCE_GAME.length, date:new Date().toISOString()};
+    saveStudent(state.student, s);
+    const rb = el('div',{class:'result-box'});
+    rb.appendChild(el('h2',{},'Selesai! 🎉'));
+    rb.appendChild(el('p',{}, `Skor kamu: ${g.score} dari ${SENTENCE_GAME.length}`));
+    box.appendChild(rb);
+    box.appendChild(el('button',{class:'btn', onclick:()=>{state.game=null; render();}},'Kembali ke Games'));
+    return box;
+  }
+  const item = SENTENCE_GAME[g.idx];
+  if(!g.pool){ g.pool=[...item.parts].sort(()=>Math.random()-0.5); g.picked=[]; }
+  const card = el('div',{class:'card'});
+  card.appendChild(el('p',{class:'small'}, `Kalimat ${g.idx+1} dari ${SENTENCE_GAME.length}`));
+  card.appendChild(el('h3',{},'Susun kata berikut menjadi kalimat yang tepat:'));
+  const pickedRow = el('div',{style:'min-height:46px;padding:8px;border:1.5px dashed var(--border);border-radius:10px;margin-bottom:12px;'});
+  g.picked.forEach((w,i)=>{ pickedRow.appendChild(el('span',{class:'word-chip picked', onclick:()=>{ g.picked.splice(i,1); g.pool.push(w); render(); }}, w)); });
+  card.appendChild(pickedRow);
+  const poolRow = el('div',{});
+  g.pool.forEach((w,i)=>{ poolRow.appendChild(el('span',{class:'word-chip', onclick:()=>{ g.picked.push(w); g.pool.splice(i,1); render(); }}, w)); });
+  card.appendChild(poolRow);
+  const fb = el('div',{style:'margin-top:12px'});
+  card.appendChild(fb);
+  const actions = el('div',{style:'margin-top:14px;display:flex;gap:10px'});
+  actions.appendChild(el('button',{class:'btn', onclick:()=>{
+    const answer = g.picked.join(' ');
+    if(answer===item.correct){ g.score++; fb.innerHTML=''; fb.appendChild(el('p',{style:'color:#166B49;font-weight:600'},'Benar! 🎉')); }
+    else { fb.innerHTML=''; fb.appendChild(el('p',{style:'color:#9B3220;font-weight:600'}, `Belum tepat. Kalimat yang benar: "${item.correct}"`)); }
+    setTimeout(()=>{ g.idx++; g.pool=null; render(); }, 1400);
+  }}, 'Periksa'));
+  actions.appendChild(el('button',{class:'btn secondary', onclick:()=>{ g.pool=[...item.parts].sort(()=>Math.random()-0.5); g.picked=[]; render(); }}, 'Acak Ulang'));
+  card.appendChild(actions);
+  box.appendChild(card);
+  return box;
+}
+
+function screenBijak(){
+  const box = el('div',{});
+  box.appendChild(el('h2',{},'Kata-kata Bijak'));
+  box.appendChild(el('p',{class:'small', style:'margin-bottom:18px'},'Motivasi harian untuk menumbuhkan semangat membaca.'));
+  const idx = new Date().getDate() % QUOTES.length;
+  box.appendChild(el('div',{class:'quote-card'}, el('p',{}, `"${QUOTES[idx]}"`)));
+  box.appendChild(el('h3',{style:'margin-top:22px'},'Kata Bijak Lainnya'));
+  const grid = el('div',{class:'grid'});
+  QUOTES.forEach((q,i)=>{ if(i!==idx) grid.appendChild(el('div',{class:'card', style:'padding:16px'}, el('p',{style:'margin:0'}, `"${q}"`))); });
+  box.appendChild(grid);
+  return box;
+}
+
+function screenProgres(){
+  const box = el('div',{});
+  box.appendChild(el('h2',{},'Progres Saya'));
+  const s = getStudent(state.student);
+  const totalP = PASSAGES.length;
+  const doneP = Object.keys(s.progress.passages).length;
+  const avg = doneP? Math.round(Object.values(s.progress.passages).reduce((a,b)=>a+b.pct,0)/doneP) : null;
+  const lvl = levelFromAvg(avg);
+  const card = el('div',{class:'card'});
+  card.appendChild(el('div',{class:'stat-row'},
+    el('div',{class:'stat-box'}, el('div',{class:'num'}, `${doneP}/${totalP}`), el('div',{class:'small'},'Bacaan Selesai')),
+    el('div',{class:'stat-box'}, el('div',{class:'num'}, avg!==null? `${avg}%`: '—'), el('div',{class:'small'},'Rata-rata Skor Soal'))
+  ));
+  card.appendChild(el('div',{class:'progress-bar', style:'margin-top:16px'}, el('div',{style:`width:${totalP? doneP/totalP*100:0}%`})));
+  box.appendChild(card);
+
+  const recCard = el('div',{class:'card'});
+  recCard.appendChild(el('h3',{},'Rekomendasi Belajar (Adaptive Reading Path)'));
+  recCard.appendChild(el('p',{}, `Level kamu saat ini:`));
+  recCard.appendChild(el('span',{class:'level-tag'}, lvl.name));
+  recCard.appendChild(el('p',{class:'small', style:'margin-top:10px'}, lvl.desc));
+  box.appendChild(recCard);
+
+  const detail = el('div',{class:'card'});
+  detail.appendChild(el('h3',{},'Rincian Bacaan'));
+  const tbl = el('table',{});
+  tbl.appendChild(el('tr',{}, el('th',{},'Judul'), el('th',{},'Skor'), el('th',{},'Tanggal')));
+  PASSAGES.forEach(p=>{
+    const pr = s.progress.passages[p.id];
+    tbl.appendChild(el('tr',{}, el('td',{},p.title), el('td',{}, pr? `${pr.score}/${pr.total} (${pr.pct}%)` : '—'), el('td',{class:'small'}, pr? new Date(pr.date).toLocaleDateString('id-ID') : '—')));
+  });
+  detail.appendChild(tbl);
+  box.appendChild(detail);
+
+  const gdetail = el('div',{class:'card'});
+  gdetail.appendChild(el('h3',{},'Rincian Games'));
+  const gt = el('table',{});
+  gt.appendChild(el('tr',{}, el('th',{},'Game'), el('th',{},'Skor')));
+  gt.appendChild(el('tr',{}, el('td',{},'Tebak Kata'), el('td',{}, s.progress.games.tebak? `${s.progress.games.tebak.score}/${s.progress.games.tebak.total}` : '—')));
+  gt.appendChild(el('tr',{}, el('td',{},'Petualangan Kata'), el('td',{}, s.progress.games.susun? `${s.progress.games.susun.score}/${s.progress.games.susun.total}` : '—')));
+  gdetail.appendChild(gt);
+  box.appendChild(gdetail);
+  return box;
+}
+
+function screenGuru(){
+  const box = el('div',{});
+  box.appendChild(el('h2',{},'Dashboard Guru'));
+  const db = loadDB();
+  const names = Object.keys(db);
+  if(names.length===0){
+    box.appendChild(el('p',{class:'empty'},'Belum ada data siswa. Data akan muncul setelah siswa login dan mulai belajar di perangkat ini.'));
+    return box;
+  }
+  const totalP = PASSAGES.length, totalG = 2;
+  let sumAvg=0, countAvg=0, tuntas=0;
+  const rows = names.sort().map(name=>{
+    const s = db[name];
+    const doneP = Object.keys(s.progress.passages).length;
+    const avg = doneP? Math.round(Object.values(s.progress.passages).reduce((a,b)=>a+b.pct,0)/doneP) : null;
+    if(avg!==null){ sumAvg+=avg; countAvg++; }
+    const doneG = (s.progress.games.tebak?1:0)+(s.progress.games.susun?1:0);
+    const done = doneP===totalP && doneG===totalG;
+    if(done) tuntas++;
+    return {name, doneP, avg, doneG, done};
+  });
+  const classAvg = countAvg? Math.round(sumAvg/countAvg) : 0;
+
+  const summary = el('div',{class:'card'});
+  summary.appendChild(el('h3',{},'Ringkasan'));
+  const ring = el('div',{});
+  ring.appendChild(el('div',{class:'ring', style:`background:conic-gradient(var(--primary) ${classAvg*3.6}deg, #EAF0FB 0deg);`}, el('div',{style:'width:88px;height:88px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;'}, `${classAvg}%`)));
+  const summaryRow = el('div',{style:'display:flex; align-items:center; gap:24px; flex-wrap:wrap;'});
+  summaryRow.appendChild(ring);
+  summaryRow.appendChild(el('div',{class:'stat-row', style:'flex:1'},
+    el('div',{class:'stat-box'}, el('div',{class:'num'}, names.length), el('div',{class:'small'},'Total Siswa')),
+    el('div',{class:'stat-box'}, el('div',{class:'num'}, tuntas), el('div',{class:'small'},'Siswa Tuntas')),
+    el('div',{class:'stat-box'}, el('div',{class:'num'}, names.length-tuntas), el('div',{class:'small'},'Belum Tuntas'))
+  ));
+  summary.appendChild(summaryRow);
+  box.appendChild(summary);
+
+  const card = el('div',{class:'card'});
+  card.appendChild(el('h3',{},'Detail Per Siswa'));
+  const tbl = el('table',{});
+  tbl.appendChild(el('tr',{}, el('th',{},'Nama'), el('th',{},'Bacaan'), el('th',{},'Rata² Skor'), el('th',{},'Games'), el('th',{},'Status')));
+  rows.forEach(r=>{
+    let statusBadge;
+    if(r.doneP===0 && r.doneG===0) statusBadge = el('span',{class:'badge low'},'Belum Mulai');
+    else if(r.done) statusBadge = el('span',{class:'badge ok'},'Tuntas');
+    else statusBadge = el('span',{class:'badge mid'},'Berlangsung');
+    tbl.appendChild(el('tr',{},
+      el('td',{}, r.name), el('td',{}, `${r.doneP}/${totalP}`), el('td',{}, r.avg!==null? `${r.avg}%`:'—'),
+      el('td',{}, `${r.doneG}/${totalG}`), el('td',{}, statusBadge)
+    ));
+  });
+  card.appendChild(tbl);
+  box.appendChild(card);
+  box.appendChild(el('p',{class:'small'}, 'Catatan: data tersimpan di perangkat/browser ini (localStorage). Untuk pemantauan gabungan, gunakan perangkat yang sama dengan yang dipakai siswa saat belajar.'));
+  return box;
+}
+
+render();
+</script>
+</body>
+</html>
